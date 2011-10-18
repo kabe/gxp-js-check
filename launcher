@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use IPC::Open3;
+use File::Spec;
+
+$| = 1;
+
+sub main {
+  my $pid;
+  if($pid = fork()) {
+    # Parent
+    my $child = waitpid($pid, 0);
+  } elsif(defined $pid) {
+    exec("./runsleep", "3", "5");
+  } else {
+    die "Fork failed: $!";
+  }
+}
+
+main();

@@ -1,0 +1,50 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Time::HiRes qw(clock_gettime CLOCK_REALTIME nanosleep);
+
+my $sleep_gran = 0.5;
+
+sub run {
+  my $cputime = shift;
+  my $starttime = clock_gettime(CLOCK_REALTIME);
+  while(1) {
+    my $cur_time = clock_gettime(CLOCK_REALTIME);
+    if($cur_time - $starttime > $cputime) {
+      last;
+    }
+  }
+}
+
+sub rest {
+  my $sleepsec = shift;
+  my $starttime = clock_gettime(CLOCK_REALTIME);
+  while(1) {
+    my $cur_time = clock_gettime(CLOCK_REALTIME);
+    if($cur_time - $starttime > $sleepsec) {
+      last;
+    }
+    nanosleep($sleep_gran * 10**9);
+  }
+}
+
+sub main {
+  my $runtime = shift;
+  my $sleeptime = shift;
+  run($runtime);
+  rest($sleeptime);
+}
+
+if ($#ARGV != 1 ) {
+  usage();
+}
+
+main($ARGV[0], $ARGV[1]);
+
+
+sub usage {
+  print << "EOD";
+Usage: $0 RUNTIME SLEEPTIME
+EOD
+}
